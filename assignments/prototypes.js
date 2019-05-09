@@ -21,23 +21,24 @@ function GameObject(obj) {
   this.createdAt = obj.createdAt;
   this.name = obj.name;
   this.dimensions = obj.dimensions;
-  this.destroy = function() {
-    return `${this.name} was removed from the game.`;
-  };
 }
+GameObject.prototype.destroy = function() {
+  return `${this.name} was removed from the game.`;
+};
 /*
   === CharacterStats ===
   * healthPoints
   * takeDamage() // prototype method -> returns the string '<object name> took damage.'
   * should inherit destroy() from GameObject's prototype
 */
-function CharacterStats(obj) {
-  this.healthPoints = obj.healthPoints;
-  // change this to inherit destroy()
-  this.takeDamage = function() {
-    return `${this.name} took damage.`;
-  };
+function CharacterStats(characterObj) {
+  GameObject.call(this, characterObj);
+  this.healthPoints = characterObj.healthPoints;
 }
+CharacterStats.prototype = Object.create(GameObject.prototype);
+CharacterStats.prototype.takeDamage = function() {
+  return `${this.name} took damage.`;
+};
 /*
   === Humanoid (Having an appearance or character resembling that of a human.) ===
   * team
@@ -47,14 +48,17 @@ function CharacterStats(obj) {
   * should inherit destroy() from GameObject through CharacterStats
   * should inherit takeDamage() from CharacterStats
 */
-function Humanoid(obj) {
-  this.team = obj.team;
-  this.weapons = obj.weapons;
-  this.language = obj.language;
-  this.greet = function() {
-    return `${this.name} offers a greeting in ${this.language}`;
-  };
+function Humanoid(humanoidObj) {
+  CharacterStats.call(this, humanoidObj);
+  this.team = humanoidObj.team;
+  this.weapons = humanoidObj.weapons;
+  this.language = humanoidObj.language;
 }
+
+Humanoid.prototype = Object.create(CharacterStats.prototype);
+Humanoid.prototype.greet = function() {
+  return `${this.name} offers a greeting in ${this.language}`;
+};
 /*
  * Inheritance chain: GameObject -> CharacterStats -> Humanoid
  * Instances of Humanoid should have all of the same properties as CharacterStats and GameObject.
